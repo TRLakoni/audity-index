@@ -98,7 +98,7 @@
                         <p className="text-gray-600 text-lg">Complete website SEO audit in seconds</p>
                     </div>
 
-                    {/* Input Form */}
+                    {/* Input Form - This section will ALWAYS be visible */}
                     <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
                         <div className="space-y-4">
                             <div>
@@ -136,147 +136,151 @@
                         </div>
                     </div>
 
-                    {/* Results */}
+                    {/* Results Section - Only shows when results exist */}
                     {results && (
                         <div className="space-y-6">
-                            {/* Overall Score */}
+                            {/* Score Overview */}
                             <div className="bg-white rounded-lg shadow-lg p-6">
                                 <div className="text-center">
-                                    <h2 className="text-2xl font-bold mb-2">Overall SEO Score</h2>
-                                    <div className={`text-6xl font-bold ${getScoreColor(results.overallScore)}`}>
-                                        {results.overallScore}
+                                    <h2 className="text-2xl font-bold mb-4">Overall SEO Score</h2>
+                                    <div className={`text-6xl font-bold ${getScoreColor(results.overallScore)} mb-4`}>
+                                        {results.overallScore}/100
                                     </div>
-                                    <p className="text-gray-600 mt-2">out of 100</p>
-                                    
-                                    {results.overallScore < 80 && (
-                                        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
-                                            <p className="text-lg font-semibold text-gray-800 mb-2">
-                                                Want to improve your SEO score?
-                                            </p>
-                                            <p className="text-gray-600 mb-4">
-                                                Get a personalized action plan from our SEO experts
-                                            </p>
-                                            <button
-                                                onClick={() => setShowContactForm(true)}
-                                                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
-                                            >
-                                                Get Custom SEO Improvement Plan
-                                            </button>
-                                        </div>
-                                    )}
+                                    <p className="text-gray-600 mb-6">
+                                        {results.overallScore >= 80 ? 'Excellent! Your site is well-optimized.' :
+                                         results.overallScore >= 60 ? 'Good, but there\'s room for improvement.' :
+                                         'Your site needs significant SEO improvements.'}
+                                    </p>
+                                    <button
+                                        onClick={() => setShowContactForm(true)}
+                                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 mx-auto"
+                                    >
+                                        <Icon name="rocket" />
+                                        Get Custom Improvement Plan
+                                    </button>
                                 </div>
                             </div>
 
-                            {/* On-Page and Technical SEO */}
-                            <div className="grid md:grid-cols-2 gap-6">
-                                {/* On-Page SEO */}
+                            {/* Category Scores */}
+                            <div className="grid md:grid-cols-2 gap-4">
                                 <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <Icon name="file-text" className="w-6 h-6 text-blue-600" />
-                                        <h3 className="text-xl font-bold">On-Page SEO</h3>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Icon name="file-text" className="w-5 h-5 text-blue-600" />
+                                            <h3 className="font-bold">Content</h3>
+                                        </div>
+                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.content)}`}>
+                                            {results.categoryScores.content}
+                                        </span>
                                     </div>
-                                    
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className="font-semibold">Title Tag</p>
-                                            <p className="text-sm text-gray-600">{results.onPage.title.value}</p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                Length: {results.onPage.title.length} chars
-                                            </p>
-                                        </div>
-
-                                        <div>
-                                            <p className="font-semibold">Meta Description</p>
-                                            <p className="text-sm text-gray-600">{results.onPage.metaDescription.value}</p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                Length: {results.onPage.metaDescription.length} chars
-                                            </p>
-                                        </div>
-
-                                        <div className="border-t pt-4">
-                                            <p className="font-semibold mb-2">Headings Structure</p>
-                                            <div className="grid grid-cols-3 gap-2 text-sm">
-                                                <div className="bg-blue-50 p-2 rounded">
-                                                    <p className="text-xs text-gray-600">H1 Tags</p>
-                                                    <p className="font-bold">{results.onPage.headings.h1Count}</p>
-                                                </div>
-                                                <div className="bg-blue-50 p-2 rounded">
-                                                    <p className="text-xs text-gray-600">H2 Tags</p>
-                                                    <p className="font-bold">{results.onPage.headings.h2Count}</p>
-                                                </div>
-                                                <div className="bg-blue-50 p-2 rounded">
-                                                    <p className="text-xs text-gray-600">H3 Tags</p>
-                                                    <p className="font-bold">{results.onPage.headings.h3Count}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="border-t pt-4">
-                                            <p className="font-semibold mb-2">Content Analysis</p>
-                                            <div className="space-y-1 text-sm">
-                                                <p>Word Count: <span className="font-bold">{results.onPage.content.wordCount}</span></p>
-                                                <p>Readability: <span className="font-bold">{results.onPage.content.readabilityScore}/100</span></p>
-                                            </div>
-                                        </div>
-
-                                        <div className="border-t pt-4">
-                                            <p className="font-semibold mb-2">Images</p>
-                                            <div className="text-sm">
-                                                <p>Total: {results.onPage.images.total}</p>
-                                                <p className="text-green-600">With Alt: {results.onPage.images.withAlt}</p>
-                                                <p className="text-red-600">Missing Alt: {results.onPage.images.withoutAlt}</p>
-                                            </div>
-                                        </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-blue-600 h-2 rounded-full" 
+                                            style={{width: `${results.categoryScores.content}%`}}
+                                        ></div>
                                     </div>
                                 </div>
 
-                                {/* Technical SEO */}
                                 <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <Icon name="zap" className="w-6 h-6 text-yellow-600" />
-                                        <h3 className="text-xl font-bold">Technical SEO</h3>
-                                        {results.realData && (
-                                            <span className="ml-auto bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">
-                                                ✓ Real Data
-                                            </span>
-                                        )}
-                                    </div>
-                                    
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                                            <span className="font-medium">HTTPS Enabled</span>
-                                            <span className={results.technical.httpsEnabled ? 'text-green-600' : 'text-red-600'}>
-                                                {results.technical.httpsEnabled ? '✓' : '✗'}
-                                            </span>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Icon name="code" className="w-5 h-5 text-purple-600" />
+                                            <h3 className="font-bold">Technical</h3>
                                         </div>
-                                        
-                                        {results.technical.structuredData !== undefined && (
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                                                <span className="font-medium">Structured Data</span>
-                                                <span className={results.technical.structuredData ? 'text-green-600' : 'text-red-600'}>
-                                                    {results.technical.structuredData ? '✓' : '✗'}
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        {results.technical.hasOgTags !== undefined && (
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                                                <span className="font-medium">Open Graph Tags</span>
-                                                <span className={results.technical.hasOgTags ? 'text-green-600' : 'text-red-600'}>
-                                                    {results.technical.hasOgTags ? '✓' : '✗'}
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        {results.technical.canonicalUrl !== undefined && (
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                                                <span className="font-medium">Canonical URL</span>
-                                                <span className={results.technical.canonicalUrl ? 'text-green-600' : 'text-red-600'}>
-                                                    {results.technical.canonicalUrl ? '✓' : '✗'}
-                                                </span>
-                                            </div>
-                                        )}
+                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.technical)}`}>
+                                            {results.categoryScores.technical}
+                                        </span>
                                     </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-purple-600 h-2 rounded-full" 
+                                            style={{width: `${results.categoryScores.technical}%`}}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Icon name="image" className="w-5 h-5 text-green-600" />
+                                            <h3 className="font-bold">Images</h3>
+                                        </div>
+                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.images)}`}>
+                                            {results.categoryScores.images}
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-green-600 h-2 rounded-full" 
+                                            style={{width: `${results.categoryScores.images}%`}}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <Icon name="link" className="w-5 h-5 text-orange-600" />
+                                            <h3 className="font-bold">Links</h3>
+                                        </div>
+                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.links)}`}>
+                                            {results.categoryScores.links}
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-orange-600 h-2 rounded-full" 
+                                            style={{width: `${results.categoryScores.links}%`}}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Issues */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                    <Icon name="alert-circle" className="w-6 h-6 text-red-600" />
+                                    Issues Found ({results.issues.length})
+                                </h3>
+                                <div className="space-y-3">
+                                    {results.issues.map((issue, index) => (
+                                        <div key={index} className="flex items-start gap-3 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
+                                            <Icon name="x-circle" className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                                            <div className="flex-1">
+                                                <p className="font-medium text-red-900">{issue.issue}</p>
+                                                {issue.details && (
+                                                    <p className="text-sm text-red-700 mt-1">{issue.details}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Recommendations */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                    <Icon name="lightbulb" className="w-6 h-6 text-yellow-600" />
+                                    Recommendations ({results.recommendations.length})
+                                </h3>
+                                <div className="space-y-3">
+                                    {results.recommendations.map((rec, index) => (
+                                        <div key={index} className="flex items-start gap-3 p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                                            <Icon name="check-circle" className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                                            <div className="flex-1">
+                                                <p className="font-medium text-yellow-900">{rec.recommendation}</p>
+                                                {rec.priority && (
+                                                    <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold ${
+                                                        rec.priority === 'high' ? 'bg-red-100 text-red-800' :
+                                                        rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-green-100 text-green-800'
+                                                    }`}>
+                                                        {rec.priority.toUpperCase()} PRIORITY
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
