@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audity - SEO Analysis Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div id="app"></div>
+    <div id="root"></div>
 
-    <script type="module">
-        import { createElement as h, useState } from 'https://esm.sh/react@18.2.0';
-        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function Icon({ name, className = "w-5 h-5" }) {
+            React.useEffect(() => {
+                lucide.createIcons();
+            });
+            return React.createElement('i', { 'data-lucide': name, className });
+        }
 
         function SEOTool() {
             const [url, setUrl] = useState('');
@@ -40,6 +51,7 @@
                     }
                 } catch (error) {
                     console.error('Analysis error:', error);
+                    alert('Failed to analyze website. Please try again.');
                 }
                 
                 setLoading(false);
@@ -56,96 +68,340 @@
                 }, 3000);
             };
 
-            return h('div', { className: 'max-w-6xl mx-auto p-6' },
-                h('div', { className: 'text-center mb-8' },
-                    h('h1', { className: 'text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2' }, 'Audity'),
-                    h('p', { className: 'text-gray-600 text-lg' }, 'Complete website SEO audit in seconds')
-                ),
-                
-                h('div', { className: 'bg-white rounded-lg shadow-lg p-6 mb-6' },
-                    h('div', { className: 'space-y-4' },
-                        h('div', null,
-                            h('label', { className: 'block text-sm font-medium text-gray-700 mb-2' }, 'Website URL'),
-                            h('input', {
-                                type: 'url',
-                                value: url,
-                                onChange: (e) => setUrl(e.target.value),
-                                placeholder: 'https://example.com',
-                                className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
-                            })
-                        ),
-                        h('div', null,
-                            h('label', { className: 'block text-sm font-medium text-gray-700 mb-2' }, 'Target Keyword (Optional)'),
-                            h('input', {
-                                type: 'text',
-                                value: keyword,
-                                onChange: (e) => setKeyword(e.target.value),
-                                placeholder: 'e.g., best SEO tools',
-                                className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
-                            })
-                        ),
-                        h('button', {
-                            onClick: analyzeURL,
-                            disabled: !url || loading,
-                            className: 'w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400'
-                        }, loading ? 'Analyzing...' : 'Analyze Website')
-                    )
-                ),
+            const getScoreColor = (score) => {
+                if (score >= 80) return 'text-green-600';
+                if (score >= 60) return 'text-yellow-600';
+                return 'text-red-600';
+            };
 
-                results && h('div', { className: 'bg-white rounded-lg shadow-lg p-6' },
-                    h('div', { className: 'text-center' },
-                        h('h2', { className: 'text-2xl font-bold mb-2' }, 'Overall SEO Score'),
-                        h('div', { className: 'text-6xl font-bold text-blue-600' }, results.overallScore),
-                        h('p', { className: 'text-gray-600 mt-2' }, 'out of 100'),
-                        
-                        results.overallScore < 80 && h('div', { className: 'mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200' },
-                            h('p', { className: 'text-lg font-semibold text-gray-800 mb-2' }, 'Want to improve your SEO score?'),
-                            h('p', { className: 'text-gray-600 mb-4' }, 'Get a personalized action plan from our SEO experts'),
-                            h('button', {
-                                onClick: () => setShowContactForm(true),
-                                className: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700'
-                            }, 'Get Custom SEO Improvement Plan')
-                        )
-                    )
-                ),
+            return (
+                <div className="max-w-6xl mx-auto p-6">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="flex items-center justify-center gap-3 mb-2">
+                            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="w-16 h-16">
+                                <defs>
+                                    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style={{stopColor:'#2563eb', stopOpacity:1}} />
+                                        <stop offset="100%" style={{stopColor:'#4f46e5', stopOpacity:1}} />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="40" cy="40" r="38" fill="none" stroke="url(#logoGradient)" strokeWidth="4" opacity="0.3"/>
+                                <path d="M 25 45 L 35 55 L 55 30" fill="none" stroke="url(#logoGradient)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <rect x="20" y="50" width="8" height="15" fill="url(#logoGradient)" rx="2"/>
+                                <rect x="32" y="42" width="8" height="23" fill="url(#logoGradient)" rx="2"/>
+                                <rect x="44" y="34" width="8" height="31" fill="url(#logoGradient)" rx="2"/>
+                                <rect x="56" y="26" width="8" height="39" fill="url(#logoGradient)" rx="2"/>
+                            </svg>
+                            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Audity</h1>
+                        </div>
+                        <p className="text-gray-600 text-lg">Complete website SEO audit in seconds</p>
+                    </div>
 
-                showContactForm && h('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50' },
-                    h('div', { className: 'bg-white rounded-lg shadow-2xl max-w-md w-full p-6' },
-                        formSubmitted ? 
-                            h('div', { className: 'text-center py-8' },
-                                h('h3', { className: 'text-2xl font-bold mb-2' }, 'Thank You!'),
-                                h('p', { className: 'text-gray-600' }, "We'll send your custom SEO improvement plan within 24 hours.")
-                            ) :
-                            h('form', { onSubmit: handleContactSubmit, className: 'space-y-4' },
-                                h('h3', { className: 'text-2xl font-bold mb-4' }, 'Get Your Custom Plan'),
-                                h('input', {
-                                    type: 'text',
-                                    required: true,
-                                    value: formData.name,
-                                    onChange: (e) => setFormData({...formData, name: e.target.value}),
-                                    placeholder: 'Your Name',
-                                    className: 'w-full px-4 py-2 border rounded-lg'
-                                }),
-                                h('input', {
-                                    type: 'email',
-                                    required: true,
-                                    value: formData.email,
-                                    onChange: (e) => setFormData({...formData, email: e.target.value}),
-                                    placeholder: 'Your Email',
-                                    className: 'w-full px-4 py-2 border rounded-lg'
-                                }),
-                                h('button', {
-                                    type: 'submit',
-                                    className: 'w-full bg-blue-600 text-white py-3 rounded-lg font-semibold'
-                                }, 'Send Me My Custom Plan')
-                            )
-                    )
-                )
+                    {/* Input Form */}
+                    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
+                                <input
+                                    type="url"
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="https://example.com"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Target Keyword (Optional)</label>
+                                <input
+                                    type="text"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                    placeholder="e.g., best SEO tools"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                            <button
+                                onClick={analyzeURL}
+                                disabled={!url || loading}
+                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {loading ? 'Analyzing...' : (
+                                    <>
+                                        <Icon name="search" />
+                                        Analyze Website
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Results */}
+                    {results && (
+                        <div className="space-y-6">
+                            {/* Overall Score */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-bold mb-2">Overall SEO Score</h2>
+                                    <div className={`text-6xl font-bold ${getScoreColor(results.overallScore)}`}>
+                                        {results.overallScore}
+                                    </div>
+                                    <p className="text-gray-600 mt-2">out of 100</p>
+                                    
+                                    {results.overallScore < 80 && (
+                                        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
+                                            <p className="text-lg font-semibold text-gray-800 mb-2">
+                                                Want to improve your SEO score?
+                                            </p>
+                                            <p className="text-gray-600 mb-4">
+                                                Get a personalized action plan from our SEO experts
+                                            </p>
+                                            <button
+                                                onClick={() => setShowContactForm(true)}
+                                                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
+                                            >
+                                                Get Custom SEO Improvement Plan
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* On-Page and Technical SEO */}
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {/* On-Page SEO */}
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Icon name="file-text" className="w-6 h-6 text-blue-600" />
+                                        <h3 className="text-xl font-bold">On-Page SEO</h3>
+                                    </div>
+                                    
+                                    <div className="space-y-4">
+                                        <div>
+                                            <p className="font-semibold">Title Tag</p>
+                                            <p className="text-sm text-gray-600">{results.onPage.title.value}</p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Length: {results.onPage.title.length} chars
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <p className="font-semibold">Meta Description</p>
+                                            <p className="text-sm text-gray-600">{results.onPage.metaDescription.value}</p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Length: {results.onPage.metaDescription.length} chars
+                                            </p>
+                                        </div>
+
+                                        <div className="border-t pt-4">
+                                            <p className="font-semibold mb-2">Headings Structure</p>
+                                            <div className="grid grid-cols-3 gap-2 text-sm">
+                                                <div className="bg-blue-50 p-2 rounded">
+                                                    <p className="text-xs text-gray-600">H1 Tags</p>
+                                                    <p className="font-bold">{results.onPage.headings.h1Count}</p>
+                                                </div>
+                                                <div className="bg-blue-50 p-2 rounded">
+                                                    <p className="text-xs text-gray-600">H2 Tags</p>
+                                                    <p className="font-bold">{results.onPage.headings.h2Count}</p>
+                                                </div>
+                                                <div className="bg-blue-50 p-2 rounded">
+                                                    <p className="text-xs text-gray-600">H3 Tags</p>
+                                                    <p className="font-bold">{results.onPage.headings.h3Count}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t pt-4">
+                                            <p className="font-semibold mb-2">Content Analysis</p>
+                                            <div className="space-y-1 text-sm">
+                                                <p>Word Count: <span className="font-bold">{results.onPage.content.wordCount}</span></p>
+                                                <p>Readability: <span className="font-bold">{results.onPage.content.readabilityScore}/100</span></p>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-t pt-4">
+                                            <p className="font-semibold mb-2">Images</p>
+                                            <div className="text-sm">
+                                                <p>Total: {results.onPage.images.total}</p>
+                                                <p className="text-green-600">With Alt: {results.onPage.images.withAlt}</p>
+                                                <p className="text-red-600">Missing Alt: {results.onPage.images.withoutAlt}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Technical SEO */}
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Icon name="zap" className="w-6 h-6 text-yellow-600" />
+                                        <h3 className="text-xl font-bold">Technical SEO</h3>
+                                        {results.realData && (
+                                            <span className="ml-auto bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">
+                                                ✓ Real Data
+                                            </span>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                            <span className="font-medium">HTTPS Enabled</span>
+                                            <span className={results.technical.httpsEnabled ? 'text-green-600' : 'text-red-600'}>
+                                                {results.technical.httpsEnabled ? '✓' : '✗'}
+                                            </span>
+                                        </div>
+                                        
+                                        {results.technical.structuredData !== undefined && (
+                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                                <span className="font-medium">Structured Data</span>
+                                                <span className={results.technical.structuredData ? 'text-green-600' : 'text-red-600'}>
+                                                    {results.technical.structuredData ? '✓' : '✗'}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        {results.technical.hasOgTags !== undefined && (
+                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                                <span className="font-medium">Open Graph Tags</span>
+                                                <span className={results.technical.hasOgTags ? 'text-green-600' : 'text-red-600'}>
+                                                    {results.technical.hasOgTags ? '✓' : '✗'}
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        {results.technical.canonicalUrl !== undefined && (
+                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                                <span className="font-medium">Canonical URL</span>
+                                                <span className={results.technical.canonicalUrl ? 'text-green-600' : 'text-red-600'}>
+                                                    {results.technical.canonicalUrl ? '✓' : '✗'}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Keywords */}
+                            {results.keywords && results.keywords.length > 0 && (
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Icon name="trending-up" className="w-6 h-6 text-green-600" />
+                                        <h3 className="text-xl font-bold">Top Keywords</h3>
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-4 py-2 text-left font-semibold">Keyword</th>
+                                                    <th className="px-4 py-2 text-left font-semibold">Count</th>
+                                                    <th className="px-4 py-2 text-left font-semibold">Density</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {results.keywords.slice(0, 5).map((kw, idx) => (
+                                                    <tr key={idx} className="border-t">
+                                                        <td className="px-4 py-2">{kw.keyword}</td>
+                                                        <td className="px-4 py-2">{kw.count}</td>
+                                                        <td className="px-4 py-2">{kw.density}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Contact Form Modal */}
+                    {showContactForm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                            <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6">
+                                {formSubmitted ? (
+                                    <div className="text-center py-8">
+                                        <div className="text-green-600 text-6xl mb-4">✓</div>
+                                        <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
+                                        <p className="text-gray-600">
+                                            We'll send your custom SEO improvement plan within 24 hours.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div>
+                                                <h3 className="text-2xl font-bold mb-2">Get Your Custom Plan</h3>
+                                                <p className="text-gray-600">Our experts will analyze your site</p>
+                                            </div>
+                                            <button
+                                                onClick={() => setShowContactForm(false)}
+                                                className="text-gray-400 hover:text-gray-600 text-2xl"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                        
+                                        <form onSubmit={handleContactSubmit} className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="John Doe"
+                                                />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                                <input
+                                                    type="email"
+                                                    required
+                                                    value={formData.email}
+                                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                    placeholder="john@example.com"
+                                                />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Goals (optional)</label>
+                                                <textarea
+                                                    value={formData.message}
+                                                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                    rows="3"
+                                                    placeholder="I want to rank higher for..."
+                                                />
+                                            </div>
+                                            
+                                            <div className="bg-blue-50 p-3 rounded-lg text-sm">
+                                                <p className="font-semibold text-blue-900">Site: {url}</p>
+                                                <p className="text-blue-700">Score: {results?.overallScore}/100</p>
+                                            </div>
+                                            
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700"
+                                            >
+                                                Send Me My Custom Plan
+                                            </button>
+                                            
+                                            <p className="text-xs text-gray-500 text-center">
+                                                Free • No credit card • 24hr response
+                                            </p>
+                                        </form>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
             );
         }
 
-        const root = createRoot(document.getElementById('app'));
-        root.render(h(SEOTool));
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<SEOTool />);
     </script>
 </body>
 </html>
