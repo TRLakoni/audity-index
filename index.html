@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audity - SEO Analysis Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div id="app"></div>
+
+    <script type="module">
+        import { createElement as h, useState } from 'https://esm.sh/react@18.2.0';
+        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+
+        function SEOTool() {
+            const [url, setUrl] = useState('');
+            const [keyword, setKeyword] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [results, setResults] = useState(null);
+            const [showContactForm, setShowContactForm] = useState(false);
+            const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+            const [formSubmitted, setFormSubmitted] = useState(false);
+
+            const analyzeURL = async () => {
+                if (!url) return;
+                setLoading(true);
+
+                try {
+                    const backendUrl = 'https://audity-backend-production.up.railway.app/api/analyze';
+                    const response = await fetch(backendUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url, keyword })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        setResults(data);
+                    }
+                } catch (error) {
+                    console.error('Analysis error:', error);
+                }
+                
+                setLoading(false);
+            };
+
+            const handleContactSubmit = (e) => {
+                e.preventDefault();
+                console.log('Lead captured:', { ...formData, url, score: results?.overallScore });
+                setFormSubmitted(true);
+                setTimeout(() => {
+                    setShowContactForm(false);
+                    setFormSubmitted(false);
+                    setFormData({ name: '', email: '', message: '' });
+                }, 3000);
+            };
+
+            return h('div', { className: 'max-w-6xl mx-auto p-6' },
+                h('div', { className: 'text-center mb-8' },
+                    h('h1', { className: 'text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2' }, 'Audity'),
+                    h('p', { className: 'text-gray-600 text-lg' }, 'Complete website SEO audit in seconds')
+                ),
+                
+                h('div', { className: 'bg-white rounded-lg shadow-lg p-6 mb-6' },
+                    h('div', { className: 'space-y-4' },
+                        h('div', null,
+                            h('label', { className: 'block text-sm font-medium text-gray-700 mb-2' }, 'Website URL'),
+                            h('input', {
+                                type: 'url',
+                                value: url,
+                                onChange: (e) => setUrl(e.target.value),
+                                placeholder: 'https://example.com',
+                                className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
+                            })
+                        ),
+                        h('div', null,
+                            h('label', { className: 'block text-sm font-medium text-gray-700 mb-2' }, 'Target Keyword (Optional)'),
+                            h('input', {
+                                type: 'text',
+                                value: keyword,
+                                onChange: (e) => setKeyword(e.target.value),
+                                placeholder: 'e.g., best SEO tools',
+                                className: 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
+                            })
+                        ),
+                        h('button', {
+                            onClick: analyzeURL,
+                            disabled: !url || loading,
+                            className: 'w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400'
+                        }, loading ? 'Analyzing...' : 'Analyze Website')
+                    )
+                ),
+
+                results && h('div', { className: 'bg-white rounded-lg shadow-lg p-6' },
+                    h('div', { className: 'text-center' },
+                        h('h2', { className: 'text-2xl font-bold mb-2' }, 'Overall SEO Score'),
+                        h('div', { className: 'text-6xl font-bold text-blue-600' }, results.overallScore),
+                        h('p', { className: 'text-gray-600 mt-2' }, 'out of 100'),
+                        
+                        results.overallScore < 80 && h('div', { className: 'mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200' },
+                            h('p', { className: 'text-lg font-semibold text-gray-800 mb-2' }, 'Want to improve your SEO score?'),
+                            h('p', { className: 'text-gray-600 mb-4' }, 'Get a personalized action plan from our SEO experts'),
+                            h('button', {
+                                onClick: () => setShowContactForm(true),
+                                className: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700'
+                            }, 'Get Custom SEO Improvement Plan')
+                        )
+                    )
+                ),
+
+                showContactForm && h('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50' },
+                    h('div', { className: 'bg-white rounded-lg shadow-2xl max-w-md w-full p-6' },
+                        formSubmitted ? 
+                            h('div', { className: 'text-center py-8' },
+                                h('h3', { className: 'text-2xl font-bold mb-2' }, 'Thank You!'),
+                                h('p', { className: 'text-gray-600' }, "We'll send your custom SEO improvement plan within 24 hours.")
+                            ) :
+                            h('form', { onSubmit: handleContactSubmit, className: 'space-y-4' },
+                                h('h3', { className: 'text-2xl font-bold mb-4' }, 'Get Your Custom Plan'),
+                                h('input', {
+                                    type: 'text',
+                                    required: true,
+                                    value: formData.name,
+                                    onChange: (e) => setFormData({...formData, name: e.target.value}),
+                                    placeholder: 'Your Name',
+                                    className: 'w-full px-4 py-2 border rounded-lg'
+                                }),
+                                h('input', {
+                                    type: 'email',
+                                    required: true,
+                                    value: formData.email,
+                                    onChange: (e) => setFormData({...formData, email: e.target.value}),
+                                    placeholder: 'Your Email',
+                                    className: 'w-full px-4 py-2 border rounded-lg'
+                                }),
+                                h('button', {
+                                    type: 'submit',
+                                    className: 'w-full bg-blue-600 text-white py-3 rounded-lg font-semibold'
+                                }, 'Send Me My Custom Plan')
+                            )
+                    )
+                )
+            );
+        }
+
+        const root = createRoot(document.getElementById('app'));
+        root.render(h(SEOTool));
+    </script>
+</body>
+</html>
