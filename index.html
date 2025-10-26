@@ -47,13 +47,32 @@
 
                     if (response.ok) {
                         const data = await response.json();
-                        setResults(data);
+
+                        // Validate response data structure to prevent crashes
+                        const validatedData = {
+                            overallScore: data.overallScore || 0,
+                            categoryScores: {
+                                content: data.categoryScores?.content || 0,
+                                technical: data.categoryScores?.technical || 0,
+                                images: data.categoryScores?.images || 0,
+                                links: data.categoryScores?.links || 0
+                            },
+                            issues: Array.isArray(data.issues) ? data.issues : [],
+                            recommendations: Array.isArray(data.recommendations) ? data.recommendations : [],
+                            keywords: Array.isArray(data.keywords) ? data.keywords : []
+                        };
+
+                        setResults(validatedData);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Server error:', errorText);
+                        alert('Failed to analyze website. Server returned an error.');
                     }
                 } catch (error) {
                     console.error('Analysis error:', error);
-                    alert('Failed to analyze website. Please try again.');
+                    alert('Failed to analyze website. Please check the URL and try again.');
                 }
-                
+
                 setLoading(false);
             };
 
