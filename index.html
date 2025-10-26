@@ -5,6 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audity - SEO Analysis Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <div id="root"></div>
@@ -78,10 +117,23 @@
                     <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                     </svg>
+                ),
+                'spinner': (
+                    <svg className={className + " animate-spin"} fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
                 )
             };
 
             return icons[name] || null;
+        }
+
+        // Skeleton component for loading states
+        function Skeleton({ className = "" }) {
+            return (
+                <div className={`animate-pulse bg-gray-300 rounded ${className}`}></div>
+            );
         }
 
         class ErrorBoundary extends React.Component {
@@ -252,9 +304,14 @@
                             <button
                                 onClick={analyzeURL}
                                 disabled={!url || loading}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-200"
                             >
-                                {loading ? 'Analyzing...' : (
+                                {loading ? (
+                                    <>
+                                        <Icon name="spinner" className="w-5 h-5" />
+                                        Analyzing...
+                                    </>
+                                ) : (
                                     <>
                                         <Icon name="search" />
                                         Analyze Website
@@ -266,7 +323,7 @@
 
                     {/* Error Display */}
                     {error && (
-                        <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6">
+                        <div className="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6 animate-fadeIn">
                             <div className="flex items-start gap-3">
                                 <Icon name="alert-triangle" className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" />
                                 <div>
@@ -278,9 +335,63 @@
                         </div>
                     )}
 
+                    {/* Loading Skeleton */}
+                    {loading && (
+                        <div className="space-y-6 animate-fadeIn">
+                            {/* Score Overview Skeleton */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <div className="text-center">
+                                    <Skeleton className="h-8 w-48 mx-auto mb-4" />
+                                    <Skeleton className="h-20 w-32 mx-auto mb-4" />
+                                    <Skeleton className="h-6 w-64 mx-auto mb-6" />
+                                    <Skeleton className="h-12 w-64 mx-auto" />
+                                </div>
+                            </div>
+
+                            {/* Category Scores Skeleton */}
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="bg-white rounded-lg shadow-lg p-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <Skeleton className="h-6 w-24" />
+                                            <Skeleton className="h-8 w-12" />
+                                        </div>
+                                        <Skeleton className="h-2 w-full" />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Issues Skeleton */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <Skeleton className="h-8 w-40 mb-4" />
+                                <div className="space-y-3">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="p-4 bg-gray-50 rounded-lg">
+                                            <Skeleton className="h-5 w-full mb-2" />
+                                            <Skeleton className="h-4 w-3/4" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Recommendations Skeleton */}
+                            <div className="bg-white rounded-lg shadow-lg p-6">
+                                <Skeleton className="h-8 w-48 mb-4" />
+                                <div className="space-y-3">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="p-4 bg-gray-50 rounded-lg">
+                                            <Skeleton className="h-5 w-full mb-2" />
+                                            <Skeleton className="h-4 w-2/3" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Results Section - Only shows when results exist */}
                     {results && (
-                        <div className="space-y-6">
+                        <div className="space-y-6 animate-fadeIn">
                             {/* Score Overview */}
                             <div className="bg-white rounded-lg shadow-lg p-6">
                                 <div className="text-center">
@@ -316,8 +427,8 @@
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className="bg-blue-600 h-2 rounded-full" 
+                                        <div
+                                            className="bg-blue-600 h-2 rounded-full transition-all duration-1000 ease-out"
                                             style={{width: `${results.categoryScores.content}%`}}
                                         ></div>
                                     </div>
@@ -334,8 +445,8 @@
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className="bg-purple-600 h-2 rounded-full" 
+                                        <div
+                                            className="bg-purple-600 h-2 rounded-full transition-all duration-1000 ease-out"
                                             style={{width: `${results.categoryScores.technical}%`}}
                                         ></div>
                                     </div>
@@ -352,8 +463,8 @@
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className="bg-green-600 h-2 rounded-full" 
+                                        <div
+                                            className="bg-green-600 h-2 rounded-full transition-all duration-1000 ease-out"
                                             style={{width: `${results.categoryScores.images}%`}}
                                         ></div>
                                     </div>
@@ -370,8 +481,8 @@
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
-                                            className="bg-orange-600 h-2 rounded-full" 
+                                        <div
+                                            className="bg-orange-600 h-2 rounded-full transition-all duration-1000 ease-out"
                                             style={{width: `${results.categoryScores.links}%`}}
                                         ></div>
                                     </div>
