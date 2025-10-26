@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audity - SEO Analysis Tool</title>
+    <title>Audity - Enterprise SEO Analysis Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Premium Animations */
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -17,8 +25,68 @@
             }
         }
 
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         .animate-fadeIn {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .animate-fadeInScale {
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        .animate-slideInRight {
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
         }
 
         @keyframes spin {
@@ -43,9 +111,105 @@
         .animate-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+
+        /* Glass Morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Premium Gradients */
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .gradient-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .gradient-premium {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        /* Premium Shadows */
+        .shadow-premium {
+            box-shadow: 0 20px 60px -10px rgba(102, 126, 234, 0.3);
+        }
+
+        .shadow-glow {
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Circular Progress */
+        @keyframes progressFill {
+            from {
+                stroke-dashoffset: 314;
+            }
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            stroke-dasharray: 314;
+            stroke-dashoffset: 314;
+            animation: progressFill 1.5s ease-out forwards;
+        }
+
+        /* Premium Background */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+        }
+
+        .bg-pattern {
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.3) 0%, transparent 50%);
+        }
+
+        /* Hover Effects */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Number Counter Animation */
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .count-up {
+            animation: countUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+<body class="min-h-screen bg-pattern">
     <div id="root"></div>
 
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -158,6 +322,55 @@
         function Skeleton({ className = "" }) {
             return (
                 <div className={`animate-pulse bg-gray-300 rounded ${className}`}></div>
+            );
+        }
+
+        // Premium Circular Progress Component
+        function CircularProgress({ score, size = 120, strokeWidth = 8, label = "" }) {
+            const radius = (size - strokeWidth) / 2;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (score / 100) * circumference;
+
+            const getColor = (score) => {
+                if (score >= 80) return '#10b981'; // green
+                if (score >= 60) return '#f59e0b'; // yellow
+                return '#ef4444'; // red
+            };
+
+            return (
+                <div className="relative inline-flex items-center justify-center">
+                    <svg width={size} height={size} className="transform -rotate-90">
+                        {/* Background circle */}
+                        <circle
+                            cx={size / 2}
+                            cy={size / 2}
+                            r={radius}
+                            stroke="rgba(255,255,255,0.1)"
+                            strokeWidth={strokeWidth}
+                            fill="none"
+                        />
+                        {/* Progress circle */}
+                        <circle
+                            cx={size / 2}
+                            cy={size / 2}
+                            r={radius}
+                            stroke={getColor(score)}
+                            strokeWidth={strokeWidth}
+                            fill="none"
+                            strokeDasharray={circumference}
+                            strokeDashoffset={offset}
+                            strokeLinecap="round"
+                            style={{
+                                transition: 'stroke-dashoffset 1.5s ease-out',
+                                filter: `drop-shadow(0 0 10px ${getColor(score)})`
+                            }}
+                        />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-4xl font-bold text-white count-up">{score}</span>
+                        {label && <span className="text-xs text-white opacity-80">{label}</span>}
+                    </div>
+                </div>
             );
         }
 
@@ -451,32 +664,37 @@ Generated by Audity - https://audity.com
             };
 
             return (
-                <div className="max-w-6xl mx-auto p-6">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="flex items-center justify-center gap-3 mb-2">
-                            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="w-16 h-16">
+                <div className="min-h-screen">
+                    {/* Premium Header */}
+                    <div className="text-center pt-12 pb-8 px-6 animate-fadeIn">
+                        <div className="inline-flex items-center gap-3 mb-4 animate-float">
+                            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 drop-shadow-2xl">
                                 <defs>
                                     <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style={{stopColor:'#2563eb', stopOpacity:1}} />
-                                        <stop offset="100%" style={{stopColor:'#4f46e5', stopOpacity:1}} />
+                                        <stop offset="0%" style={{stopColor:'#ffffff', stopOpacity:1}} />
+                                        <stop offset="100%" style={{stopColor:'#a78bfa', stopOpacity:1}} />
                                     </linearGradient>
                                 </defs>
-                                <circle cx="40" cy="40" r="38" fill="none" stroke="url(#logoGradient)" strokeWidth="4" opacity="0.3"/>
-                                <path d="M 25 45 L 35 55 L 55 30" fill="none" stroke="url(#logoGradient)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <circle cx="40" cy="40" r="38" fill="none" stroke="url(#logoGradient)" strokeWidth="4" opacity="0.4"/>
+                                <path d="M 25 45 L 35 55 L 55 30" fill="none" stroke="url(#logoGradient)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
                                 <rect x="20" y="50" width="8" height="15" fill="url(#logoGradient)" rx="2"/>
                                 <rect x="32" y="42" width="8" height="23" fill="url(#logoGradient)" rx="2"/>
                                 <rect x="44" y="34" width="8" height="31" fill="url(#logoGradient)" rx="2"/>
                                 <rect x="56" y="26" width="8" height="39" fill="url(#logoGradient)" rx="2"/>
                             </svg>
-                            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Audity</h1>
                         </div>
-                        <p className="text-gray-600 text-lg">Complete website SEO audit in seconds</p>
+                        <h1 className="text-7xl font-black text-white mb-4 tracking-tight">
+                            Audity
+                        </h1>
+                        <p className="text-xl text-white/90 font-light mb-2">Enterprise SEO Analysis Platform</p>
+                        <p className="text-white/70">Comprehensive website audits powered by AI</p>
                     </div>
 
-                    {/* Input Form - This section will ALWAYS be visible */}
-                    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                        <div className="space-y-4">
+                    <div className="max-w-7xl mx-auto px-6 pb-12">
+
+                    {/* Premium Input Form */}
+                    <div className="glass rounded-2xl shadow-premium p-8 mb-8 hover-lift animate-fadeInScale">
+                        <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
                                 <input
@@ -558,7 +776,7 @@ Generated by Audity - https://audity.com
                             <button
                                 onClick={analyzeURL}
                                 disabled={!url || loading || urlError}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-200"
+                                className="w-full gradient-primary text-white py-4 rounded-xl font-bold hover:shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 text-lg"
                             >
                                 {loading ? (
                                     <>
@@ -664,12 +882,12 @@ Generated by Audity - https://audity.com
                                 </button>
                             </div>
 
-                            {/* Score Overview */}
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            {/* Premium Score Overview */}
+                            <div className="glass rounded-2xl shadow-premium p-10 animate-fadeInScale hover-lift">
                                 <div className="text-center">
-                                    <h2 className="text-2xl font-bold mb-4">Overall SEO Score</h2>
-                                    <div className={`text-6xl font-bold ${getScoreColor(results.overallScore)} mb-4`}>
-                                        {results.overallScore}/100
+                                    <h2 className="text-3xl font-bold mb-8 text-gray-800">Overall SEO Score</h2>
+                                    <div className="flex justify-center mb-8">
+                                        <CircularProgress score={results.overallScore} size={180} strokeWidth={12} />
                                     </div>
                                     {results.overallScore === 0 ? (
                                         <div className="mb-6">
@@ -699,91 +917,59 @@ Generated by Audity - https://audity.com
                                     )}
                                     <button
                                         onClick={() => setShowContactForm(true)}
-                                        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 flex items-center gap-2 mx-auto"
+                                        className="gradient-premium text-white px-10 py-4 rounded-xl font-bold hover:shadow-glow flex items-center gap-3 mx-auto transition-all duration-300 text-lg"
                                     >
-                                        <Icon name="rocket" />
+                                        <Icon name="rocket" className="w-6 h-6" />
                                         Get Custom Improvement Plan
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Category Scores */}
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <Icon name="file-text" className="w-5 h-5 text-blue-600" />
-                                            <h3 className="font-bold">Content</h3>
+                            {/* Premium Category Scores */}
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="glass rounded-2xl shadow-lg p-6 hover-lift animate-slideInRight">
+                                    <div className="text-center">
+                                        <div className="mb-4 flex justify-center">
+                                            <Icon name="file-text" className="w-8 h-8 text-blue-600" />
                                         </div>
-                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.content)}`}>
-                                            {results.categoryScores.content}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-blue-600 h-2 rounded-full transition-all duration-1000 ease-out"
-                                            style={{width: `${results.categoryScores.content}%`}}
-                                        ></div>
+                                        <CircularProgress score={results.categoryScores.content} size={100} strokeWidth={6} />
+                                        <h3 className="font-bold text-gray-800 mt-4">Content</h3>
                                     </div>
                                 </div>
 
-                                <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <Icon name="code" className="w-5 h-5 text-purple-600" />
-                                            <h3 className="font-bold">Technical</h3>
+                                <div className="glass rounded-2xl shadow-lg p-6 hover-lift animate-slideInRight" style={{animationDelay: '0.1s'}}>
+                                    <div className="text-center">
+                                        <div className="mb-4 flex justify-center">
+                                            <Icon name="code" className="w-8 h-8 text-purple-600" />
                                         </div>
-                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.technical)}`}>
-                                            {results.categoryScores.technical}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-purple-600 h-2 rounded-full transition-all duration-1000 ease-out"
-                                            style={{width: `${results.categoryScores.technical}%`}}
-                                        ></div>
+                                        <CircularProgress score={results.categoryScores.technical} size={100} strokeWidth={6} />
+                                        <h3 className="font-bold text-gray-800 mt-4">Technical</h3>
                                     </div>
                                 </div>
 
-                                <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <Icon name="image" className="w-5 h-5 text-green-600" />
-                                            <h3 className="font-bold">Images</h3>
+                                <div className="glass rounded-2xl shadow-lg p-6 hover-lift animate-slideInRight" style={{animationDelay: '0.2s'}}>
+                                    <div className="text-center">
+                                        <div className="mb-4 flex justify-center">
+                                            <Icon name="image" className="w-8 h-8 text-green-600" />
                                         </div>
-                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.images)}`}>
-                                            {results.categoryScores.images}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-green-600 h-2 rounded-full transition-all duration-1000 ease-out"
-                                            style={{width: `${results.categoryScores.images}%`}}
-                                        ></div>
+                                        <CircularProgress score={results.categoryScores.images} size={100} strokeWidth={6} />
+                                        <h3 className="font-bold text-gray-800 mt-4">Images</h3>
                                     </div>
                                 </div>
 
-                                <div className="bg-white rounded-lg shadow-lg p-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2">
-                                            <Icon name="link" className="w-5 h-5 text-orange-600" />
-                                            <h3 className="font-bold">Links</h3>
+                                <div className="glass rounded-2xl shadow-lg p-6 hover-lift animate-slideInRight" style={{animationDelay: '0.3s'}}>
+                                    <div className="text-center">
+                                        <div className="mb-4 flex justify-center">
+                                            <Icon name="link" className="w-8 h-8 text-orange-600" />
                                         </div>
-                                        <span className={`text-2xl font-bold ${getScoreColor(results.categoryScores.links)}`}>
-                                            {results.categoryScores.links}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-orange-600 h-2 rounded-full transition-all duration-1000 ease-out"
-                                            style={{width: `${results.categoryScores.links}%`}}
-                                        ></div>
+                                        <CircularProgress score={results.categoryScores.links} size={100} strokeWidth={6} />
+                                        <h3 className="font-bold text-gray-800 mt-4">Links</h3>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Issues */}
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            {/* Premium Issues Section */}
+                            <div className="glass rounded-2xl shadow-premium p-8 hover-lift">
                                 <button
                                     onClick={() => setIssuesExpanded(!issuesExpanded)}
                                     className="w-full flex items-center justify-between gap-2 text-left group"
@@ -824,8 +1010,8 @@ Generated by Audity - https://audity.com
                                 )}
                             </div>
 
-                            {/* Recommendations */}
-                            <div className="bg-white rounded-lg shadow-lg p-6">
+                            {/* Premium Recommendations Section */}
+                            <div className="glass rounded-2xl shadow-premium p-8 hover-lift">
                                 <button
                                     onClick={() => setRecommendationsExpanded(!recommendationsExpanded)}
                                     className="w-full flex items-center justify-between gap-2 text-left group"
@@ -872,9 +1058,9 @@ Generated by Audity - https://audity.com
                                 )}
                             </div>
 
-                            {/* Keywords */}
+                            {/* Premium Keywords Section */}
                             {results.keywords && results.keywords.length > 0 && (
-                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                <div className="glass rounded-2xl shadow-premium p-8 hover-lift">
                                     <div className="flex items-center gap-2 mb-4">
                                         <Icon name="trending-up" className="w-6 h-6 text-green-600" />
                                         <h3 className="text-xl font-bold">Top Keywords</h3>
