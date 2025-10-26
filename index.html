@@ -384,8 +384,22 @@
             }, [score]);
 
             return (
-                <div className="relative inline-flex items-center justify-center" style={{width: size, height: size}}>
-                    <svg width={size} height={size} className="transform -rotate-90">
+                <div
+                    className="relative inline-block"
+                    style={{
+                        width: size,
+                        height: size,
+                        border: 'none',
+                        background: 'transparent',
+                        outline: 'none'
+                    }}
+                >
+                    <svg
+                        width={size}
+                        height={size}
+                        className="transform -rotate-90 block"
+                        style={{display: 'block', border: 'none', outline: 'none'}}
+                    >
                         {/* Background circle */}
                         <circle
                             cx={size / 2}
@@ -412,7 +426,10 @@
                             }}
                         />
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <div
+                        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+                        style={{border: 'none', background: 'transparent'}}
+                    >
                         <span className="text-4xl font-bold text-gray-900">
                             <AnimatedCounter target={score} duration={2000} />
                         </span>
