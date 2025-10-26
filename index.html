@@ -181,12 +181,67 @@
             const [loading, setLoading] = useState(false);
             const [results, setResults] = useState(null);
             const [error, setError] = useState(null);
+            const [urlError, setUrlError] = useState('');
             const [showContactForm, setShowContactForm] = useState(false);
             const [formData, setFormData] = useState({ name: '', email: '', message: '' });
             const [formSubmitted, setFormSubmitted] = useState(false);
 
+            // Validate and auto-correct URL
+            const validateAndCorrectURL = (inputUrl) => {
+                if (!inputUrl.trim()) {
+                    setUrlError('');
+                    return null;
+                }
+
+                let correctedUrl = inputUrl.trim();
+
+                // Auto-add https:// if no protocol
+                if (!correctedUrl.match(/^https?:\/\//i)) {
+                    correctedUrl = 'https://' + correctedUrl;
+                }
+
+                // Validate URL format
+                try {
+                    const urlObj = new URL(correctedUrl);
+
+                    // Check if it has a valid domain
+                    if (!urlObj.hostname.includes('.')) {
+                        setUrlError('Please enter a valid domain (e.g., example.com)');
+                        return null;
+                    }
+
+                    setUrlError('');
+                    return correctedUrl;
+                } catch (e) {
+                    setUrlError('Please enter a valid URL (e.g., https://example.com)');
+                    return null;
+                }
+            };
+
+            // Handle URL input change
+            const handleUrlChange = (e) => {
+                const inputUrl = e.target.value;
+                setUrl(inputUrl);
+
+                // Only validate if user has typed something
+                if (inputUrl.trim()) {
+                    validateAndCorrectURL(inputUrl);
+                } else {
+                    setUrlError('');
+                }
+            };
+
             const analyzeURL = async () => {
                 if (!url) return;
+
+                // Validate and correct URL before sending
+                const validatedUrl = validateAndCorrectURL(url);
+                if (!validatedUrl) {
+                    return; // Don't proceed if URL is invalid
+                }
+
+                // Update the input with corrected URL
+                setUrl(validatedUrl);
 
                 // Clear previous results and errors
                 setLoading(true);
@@ -198,7 +253,7 @@
                     const response = await fetch(backendUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url, keyword })
+                        body: JSON.stringify({ url: validatedUrl, keyword })
                     });
 
                     if (response.ok) {
@@ -284,12 +339,30 @@
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
                                 <input
-                                    type="url"
+                                    type="text"
                                     value={url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    placeholder="https://example.com"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    onChange={handleUrlChange}
+                                    placeholder="example.com or https://example.com"
+                                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent transition-colors ${
+                                        urlError
+                                            ? 'border-red-500 focus:ring-red-500'
+                                            : url && !urlError
+                                            ? 'border-green-500 focus:ring-green-500'
+                                            : 'border-gray-300 focus:ring-blue-500'
+                                    }`}
                                 />
+                                {urlError && (
+                                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                        <Icon name="alert-circle" className="w-4 h-4" />
+                                        {urlError}
+                                    </p>
+                                )}
+                                {url && !urlError && url.trim() && (
+                                    <p className="mt-2 text-sm text-green-600 flex items-center gap-1">
+                                        <Icon name="check-circle" className="w-4 h-4" />
+                                        Valid URL format
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Target Keyword (Optional)</label>
@@ -303,7 +376,7 @@
                             </div>
                             <button
                                 onClick={analyzeURL}
-                                disabled={!url || loading}
+                                disabled={!url || loading || urlError}
                                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-200"
                             >
                                 {loading ? (
