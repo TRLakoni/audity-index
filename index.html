@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audity - SEO Analysis Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <div id="root"></div>
@@ -15,13 +14,30 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
+        // Simple icon component using Unicode symbols to avoid DOM conflicts
         function Icon({ name, className = "w-5 h-5" }) {
-            React.useEffect(() => {
-                lucide.createIcons();
-            });
-            return React.createElement('i', { 'data-lucide': name, className });
+            const iconMap = {
+                'search': '🔍',
+                'rocket': '🚀',
+                'file-text': '📄',
+                'code': '💻',
+                'image': '🖼️',
+                'link': '🔗',
+                'alert-circle': '⚠️',
+                'x-circle': '❌',
+                'lightbulb': '💡',
+                'check-circle': '✅',
+                'trending-up': '📈',
+                'alert-triangle': '⚠️'
+            };
+
+            return React.createElement('span', {
+                className: className + ' inline-block',
+                role: 'img',
+                'aria-label': name
+            }, iconMap[name] || '•');
         }
 
         class ErrorBoundary extends React.Component {
