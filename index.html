@@ -385,20 +385,27 @@
 
             return (
                 <div
-                    className="relative inline-block"
                     style={{
+                        position: 'relative',
                         width: size,
                         height: size,
-                        border: 'none',
-                        background: 'transparent',
-                        outline: 'none'
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        overflow: 'visible'
                     }}
                 >
                     <svg
                         width={size}
                         height={size}
-                        className="transform -rotate-90 block"
-                        style={{display: 'block', border: 'none', outline: 'none'}}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            transform: 'rotate(-90deg)',
+                            overflow: 'visible'
+                        }}
                     >
                         {/* Background circle */}
                         <circle
@@ -427,13 +434,30 @@
                         />
                     </svg>
                     <div
-                        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-                        style={{border: 'none', background: 'transparent'}}
+                        style={{
+                            position: 'relative',
+                            zIndex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            pointerEvents: 'none'
+                        }}
                     >
-                        <span className="text-4xl font-bold text-gray-900">
+                        <span style={{
+                            fontSize: '2.25rem',
+                            fontWeight: 'bold',
+                            color: '#111827',
+                            lineHeight: 1
+                        }}>
                             <AnimatedCounter target={score} duration={2000} />
                         </span>
-                        {label && <span className="text-xs text-gray-700 font-medium mt-1">{label}</span>}
+                        {label && <span style={{
+                            fontSize: '0.75rem',
+                            color: '#374151',
+                            fontWeight: 500,
+                            marginTop: '0.25rem'
+                        }}>{label}</span>}
                     </div>
                 </div>
             );
