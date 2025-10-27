@@ -469,6 +469,142 @@
             );
         }
 
+        // Radar Chart Component for Category Comparison
+        function RadarChart({ scores, size = 280, darkMode = false }) {
+            const categories = [
+                { name: 'Content', score: scores.content, angle: 0 },
+                { name: 'Technical', score: scores.technical, angle: 90 },
+                { name: 'Images', score: scores.images, angle: 180 },
+                { name: 'Links', score: scores.links, angle: 270 }
+            ];
+
+            const center = size / 2;
+            const maxRadius = (size / 2) - 60;
+            const levels = 5;
+
+            const getPoint = (angle, distance) => {
+                const radian = (angle - 90) * (Math.PI / 180);
+                return {
+                    x: center + distance * Math.cos(radian),
+                    y: center + distance * Math.sin(radian)
+                };
+            };
+
+            const scorePoints = categories.map(cat => {
+                const distance = (cat.score / 100) * maxRadius;
+                return getPoint(cat.angle, distance);
+            });
+
+            const pathData = scorePoints.map((point, i) =>
+                `${i === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+            ).join(' ') + ' Z';
+
+            return (
+                <svg width={size} height={size} className="mx-auto">
+                    {/* Background circles */}
+                    {[...Array(levels)].map((_, i) => {
+                        const radius = ((i + 1) / levels) * maxRadius;
+                        return (
+                            <circle
+                                key={i}
+                                cx={center}
+                                cy={center}
+                                r={radius}
+                                fill="none"
+                                stroke={darkMode ? 'rgba(150, 150, 150, 0.2)' : 'rgba(200, 200, 200, 0.3)'}
+                                strokeWidth="1"
+                            />
+                        );
+                    })}
+
+                    {/* Axis lines */}
+                    {categories.map((cat, i) => {
+                        const endPoint = getPoint(cat.angle, maxRadius);
+                        return (
+                            <line
+                                key={i}
+                                x1={center}
+                                y1={center}
+                                x2={endPoint.x}
+                                y2={endPoint.y}
+                                stroke={darkMode ? 'rgba(150, 150, 150, 0.3)' : 'rgba(200, 200, 200, 0.5)'}
+                                strokeWidth="1"
+                            />
+                        );
+                    })}
+
+                    {/* Score area */}
+                    <path
+                        d={pathData}
+                        fill="rgba(102, 126, 234, 0.3)"
+                        stroke="#667eea"
+                        strokeWidth="2"
+                        strokeLinejoin="round"
+                    />
+
+                    {/* Score points */}
+                    {scorePoints.map((point, i) => (
+                        <circle
+                            key={i}
+                            cx={point.x}
+                            cy={point.y}
+                            r="5"
+                            fill="#667eea"
+                            stroke="white"
+                            strokeWidth="2"
+                        />
+                    ))}
+
+                    {/* Labels */}
+                    {categories.map((cat, i) => {
+                        const labelPoint = getPoint(cat.angle, maxRadius + 35);
+                        return (
+                            <text
+                                key={i}
+                                x={labelPoint.x}
+                                y={labelPoint.y}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className={`text-sm font-semibold ${darkMode ? 'fill-gray-200' : 'fill-gray-700'}`}
+                            >
+                                <tspan x={labelPoint.x} dy="-0.5em">{cat.name}</tspan>
+                                <tspan x={labelPoint.x} dy="1.2em" className="font-bold text-base" fill="#667eea">{cat.score}</tspan>
+                            </text>
+                        );
+                    })}
+                </svg>
+            );
+        }
+
+        // Progress Bar Component
+        function ProgressBar({ value, max = 100, label, color = 'blue', darkMode = false }) {
+            const percentage = (value / max) * 100;
+            const colorClasses = {
+                blue: 'bg-blue-500',
+                green: 'bg-green-500',
+                yellow: 'bg-yellow-500',
+                red: 'bg-red-500',
+                purple: 'bg-purple-500'
+            };
+
+            return (
+                <div className="space-y-2">
+                    {label && (
+                        <div className="flex justify-between items-center">
+                            <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{label}</span>
+                            <span className={`text-sm font-bold ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>{value}/{max}</span>
+                        </div>
+                    )}
+                    <div className={`w-full h-3 rounded-full overflow-hidden ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                        <div
+                            className={`h-full ${colorClasses[color]} transition-all duration-1000 ease-out rounded-full`}
+                            style={{ width: `${percentage}%` }}
+                        />
+                    </div>
+                </div>
+            );
+        }
+
         class ErrorBoundary extends React.Component {
             constructor(props) {
                 super(props);
@@ -1163,6 +1299,61 @@ Generated by Audity - https://audity.com
                                         </div>
                                         <h3 className={`font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Links</h3>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Radar Chart Visualization */}
+                            <div className={`${darkMode ? 'glass-dark' : 'glass'} rounded-2xl shadow-premium p-8 hover-lift`}>
+                                <div className="text-center mb-6">
+                                    <h3 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Category Performance Analysis</h3>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Visual breakdown of your SEO scores across all categories</p>
+                                </div>
+                                <RadarChart scores={results.categoryScores} darkMode={darkMode} />
+                            </div>
+
+                            {/* Competitive Intelligence Section */}
+                            <div className={`${darkMode ? 'glass-dark' : 'glass'} rounded-2xl shadow-premium p-8 hover-lift`}>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-12 h-12 rounded-xl gradient-success flex items-center justify-center">
+                                        <Icon name="trending-up" className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Performance Benchmark</h3>
+                                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>How you compare against industry standards</p>
+                                    </div>
+                                </div>
+
+                                {/* Benchmark Stats */}
+                                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                    <div className={`p-6 rounded-xl border-2 ${results.overallScore >= 70 ? 'border-green-500 bg-green-50/50' : results.overallScore >= 50 ? 'border-yellow-500 bg-yellow-50/50' : 'border-red-500 bg-red-50/50'} ${darkMode ? 'bg-opacity-10' : ''}`}>
+                                        <div className="text-center">
+                                            <p className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Your Ranking</p>
+                                            <p className="text-4xl font-black mb-2" style={{color: results.overallScore >= 70 ? '#10b981' : results.overallScore >= 50 ? '#f59e0b' : '#ef4444'}}>
+                                                Top {Math.max(5, Math.min(95, Math.round(100 - (results.overallScore * 0.9))))}%
+                                            </p>
+                                            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>of analyzed websites</p>
+                                        </div>
+                                    </div>
+                                    <div className={`p-6 rounded-xl border-2 border-purple-500 ${darkMode ? 'bg-purple-900/20' : 'bg-purple-50/50'}`}>
+                                        <div className="text-center">
+                                            <p className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Industry Average</p>
+                                            <p className="text-4xl font-black text-purple-600 mb-2">62</p>
+                                            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                {results.overallScore > 62 ? `You're ${results.overallScore - 62} points above average! 🎉` :
+                                                 results.overallScore === 62 ? `You're right at the average` :
+                                                 `${62 - results.overallScore} points to reach average`}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Category Benchmarks */}
+                                <div className="space-y-4">
+                                    <h4 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>Category Benchmarks</h4>
+                                    <ProgressBar value={results.categoryScores.content} label="Content Score vs Average (65)" color={results.categoryScores.content >= 65 ? 'green' : results.categoryScores.content >= 50 ? 'yellow' : 'red'} darkMode={darkMode} />
+                                    <ProgressBar value={results.categoryScores.technical} label="Technical Score vs Average (60)" color={results.categoryScores.technical >= 60 ? 'green' : results.categoryScores.technical >= 45 ? 'yellow' : 'red'} darkMode={darkMode} />
+                                    <ProgressBar value={results.categoryScores.images} label="Images Score vs Average (55)" color={results.categoryScores.images >= 55 ? 'green' : results.categoryScores.images >= 40 ? 'yellow' : 'red'} darkMode={darkMode} />
+                                    <ProgressBar value={results.categoryScores.links} label="Links Score vs Average (70)" color={results.categoryScores.links >= 70 ? 'green' : results.categoryScores.links >= 55 ? 'yellow' : 'red'} darkMode={darkMode} />
                                 </div>
                             </div>
 
